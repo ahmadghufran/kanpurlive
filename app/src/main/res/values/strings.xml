@@ -19,4 +19,14 @@
 
     <string name="play_again_desc">To see the welcome slider again, goto Settings -> apps -> welcome slider -> clear data</string>
     <string name="play_again">Play Again</string>
+
+    <!-- Facebook application ID and custom URL scheme (app ID prefixed by 'fb'). -->
+    <string name="facebook_application_id" translatable="false">YOUR_APP_ID</string>
+    <string name="facebook_login_protocol_scheme" translatable="false">fbYOUR_APP_ID</string>
+    <string name="sign_in_cancelled">sign in</string>
+    <string name="no_internet_connection">no internet connection</string>
+    <string name="unknown_error">unknown error</string>
+    <string name="empty_view_home">seems..alone</string>
+    <string name="placeholder">Placeholder</string>
+
 </resources>

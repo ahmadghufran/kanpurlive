@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.kanpurlive.ghufya.kanpur_live.intro.WelcomeActivity">
+        <activity android:name=".intro.WelcomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -16,9 +16,9 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.kanpurlive.ghufya.kanpur_live.MainActivity"
-            android:label="@string/title_activity_welcome"></activity>
+            android:name=".MainActivity"
+            android:label="@string/title_activity_welcome" />
+        <activity android:name=".ShopsThread"></activity>
     </application>
-
 
 </manifest>
