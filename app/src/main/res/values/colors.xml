@@ -42,7 +42,7 @@
     <color name="material_green_a200">#69F0AE</color>
     <color name="material_lime_a700">#AEEA00</color>
     <color name="material_purple_a700">#AA00FF</color>
-    <color name="colorTextPrimary">#D9FFFFFF</color>
-    <color name="colorTextSecondary">#8CFFFFFF</color>
+    <color name="colorTextPrimary">#CCCCCC</color>
+    <color name="colorTextSecondary">#FFFFFF</color>
 
 </resources>

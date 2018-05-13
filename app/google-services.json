@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "752306679270",
+    "firebase_url": "https://kanpurlive-91f79.firebaseio.com",
+    "project_id": "kanpurlive-91f79",
+    "storage_bucket": "kanpurlive-91f79.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752306679270:android:ecebdf4cd0c27950",
+        "android_client_info": {
+          "package_name": "com.kanpurlive.ghufya.kanpur_live"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "752306679270-pja711q6vqtggpdfdctjmh52stl9ou4g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kanpurlive.ghufya.kanpur_live",
+            "certificate_hash": "6904a5e943a2547118d938c2242a16af8ffde2aa"
+          }
+        },
+        {
+          "client_id": "752306679270-9sfgu25vdglr05ro06m5narklaltmu9b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD1GIwmYMSCfKy5133Px6TMj-6DsTxtxvQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "752306679270-9sfgu25vdglr05ro06m5narklaltmu9b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

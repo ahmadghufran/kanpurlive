@@ -4,36 +4,43 @@
     android:id="@+id/item_user_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/simple_padding_small"
+    android:layout_margin="@dimen/simple_padding_very_tiny"
     android:foreground="?attr/selectableItemBackground"
-    android:padding="@dimen/simple_padding_large">
+    android:padding="@dimen/simple_padding_very_tiny">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/simple_padding_large">
+        android:padding="@dimen/simple_padding_very_tiny"
+        >
 
         <ImageView
             android:id="@+id/item_user_image_view"
-            android:layout_width="?attr/listPreferredItemHeightSmall"
-            android:layout_height="?attr/listPreferredItemHeightSmall"
-            android:layout_centerVertical="true"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/listPreferredItemHeightLarge"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/bg"
             tools:ignore="ContentDescription" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="@dimen/simple_padding_large"
+            android:layout_alignBottom="@id/item_user_image_view"
+            android:layout_alignLeft="@id/item_user_image_view"
+            android:layout_alignRight="@id/item_user_image_view"
+            android:layout_marginLeft="@dimen/simple_padding_very_tiny"
+            android:layout_marginStart="@dimen/simple_padding_tiny"
             android:layout_toEndOf="@id/item_user_image_view"
-            android:orientation="vertical"
-            android:layout_marginLeft="@dimen/simple_padding_large"
-            android:layout_toRightOf="@id/item_user_image_view">
+            android:layout_toRightOf="@id/item_user_image_view"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/item_friend_name_text_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="#8000"
                 android:ellipsize="end"
                 android:gravity="start"
                 android:lines="1"
@@ -46,13 +53,13 @@
                 android:id="@+id/item_friend_email_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="#3000"
                 android:ellipsize="end"
-                android:gravity="start"
+                android:gravity="center"
                 android:lines="1"
                 android:text="@string/placeholder"
                 android:textColor="@color/colorTextSecondary"
-                android:textSize="@dimen/text_size_secondary" />
-
+                android:textSize="@dimen/text_size_small" />
         </LinearLayout>
 
     </RelativeLayout>
