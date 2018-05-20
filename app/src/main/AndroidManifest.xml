@@ -18,7 +18,10 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_welcome" />
-        <activity android:name=".ShopsThread"></activity>
+        <activity android:name=".ShopsThread" />
+        <activity android:name=".ItemThreadActivity" />
+        <activity android:name=".AddItemActivity" />
+        <activity android:name=".BasicActivity"></activity>
     </application>
 
 </manifest>
