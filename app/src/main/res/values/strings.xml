@@ -28,5 +28,16 @@
     <string name="unknown_error">unknown error</string>
     <string name="empty_view_home">seems..alone</string>
     <string name="placeholder">Placeholder</string>
+    <string name="country_prompt">Choose a country</string>
 
+    <string-array name="shop_type_arrays">
+        <item>Garment</item>
+        <item>Sweet Shop</item>
+        <item>Bakery</item>
+        <item>Medical</item>
+        <item>Shoes</item>
+        <item>Mobile Shop</item>
+        <item>Taylor</item>
+        <item>Vegetables</item>
+    </string-array>
 </resources>

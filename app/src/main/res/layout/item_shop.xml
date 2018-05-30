@@ -15,7 +15,7 @@
         >
 
         <ImageView
-            android:id="@+id/item_user_image_view"
+            android:id="@+id/item_shop_image_view"
             android:layout_width="match_parent"
             android:layout_height="?attr/listPreferredItemHeightLarge"
             android:layout_alignParentLeft="true"
@@ -27,17 +27,17 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@id/item_user_image_view"
-            android:layout_alignLeft="@id/item_user_image_view"
-            android:layout_alignRight="@id/item_user_image_view"
+            android:layout_alignBottom="@id/item_shop_image_view"
+            android:layout_alignLeft="@id/item_shop_image_view"
+            android:layout_alignRight="@id/item_shop_image_view"
             android:layout_marginLeft="@dimen/simple_padding_very_tiny"
             android:layout_marginStart="@dimen/simple_padding_tiny"
-            android:layout_toEndOf="@id/item_user_image_view"
-            android:layout_toRightOf="@id/item_user_image_view"
+            android:layout_toEndOf="@id/item_shop_image_view"
+            android:layout_toRightOf="@id/item_shop_image_view"
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/item_friend_name_text_view"
+                android:id="@+id/shop_name_text_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="#8000"
@@ -50,7 +50,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/item_friend_email_text_view"
+                android:id="@+id/shop_address_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#3000"

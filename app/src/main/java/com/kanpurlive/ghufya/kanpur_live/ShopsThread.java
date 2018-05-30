@@ -2,6 +2,7 @@ package com.kanpurlive.ghufya.kanpur_live;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class ShopsThread extends AppCompatActivity {
 
@@ -36,6 +38,8 @@ public class ShopsThread extends AppCompatActivity {
     EmptyStateRecyclerView shopsRecycler;
     @BindView(R.id.activity_main_empty_view)
     TextView emptyView;
+    @BindView(R.id.add_shop)
+    FloatingActionButton floatingActionButton;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -122,6 +126,11 @@ public class ShopsThread extends AppCompatActivity {
     public void onUserSelected(String id) {
         Intent thread = new Intent(this, ItemThreadActivity.class);
         thread.putExtra(Constants.USER_ID_EXTRA, id);
+        startActivity(thread);
+    }
+    @OnClick(R.id.add_shop)
+    public void addNewShop(){
+        Intent thread = new Intent(this, AddShopActivity.class);
         startActivity(thread);
     }
 }

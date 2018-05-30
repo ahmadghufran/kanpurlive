@@ -59,11 +59,11 @@ class ShopsAdapter extends FirestoreRecyclerAdapter<Shop, ShopsAdapter.ShopViewH
 
     class ShopViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        @BindView(R.id.item_user_image_view)
+        @BindView(R.id.item_shop_image_view)
         ImageView itemShopImageView;
-        @BindView(R.id.item_friend_name_text_view)
+        @BindView(R.id.shop_name_text_view)
         TextView itemFriendNameTextView;
-        @BindView(R.id.item_friend_email_text_view)
+        @BindView(R.id.shop_address_text_view)
         TextView itemFriendEmailTextView;
         @BindView(R.id.item_user_parent)
         CardView itemShopParent;

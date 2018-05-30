@@ -8,23 +8,28 @@ import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kanpurlive.ghufya.kanpur_live.R;
-import com.skydoves.colorpickerpreference.ColorEnvelope;
-import com.skydoves.colorpickerpreference.ColorListener;
-import com.skydoves.colorpickerpreference.ColorPickerDialog;
-import com.skydoves.colorpickerpreference.ColorPickerView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,113 +41,57 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-import icepick.Icepick;
 
-public class AddItemActivity extends BaseActivity {
+public class AddShopActivity extends AppCompatActivity {
 
+    @BindView(R.id.item_shop_image_view)
+    ImageView itemShopImageView;
+    @BindView(R.id.shop_name_text_view)
+    TextView shop_name_text_view;
+    @BindView(R.id.shop_address_text_view)
+    TextView shop_address_text_view;
 
-    @BindView(R.id.item_user_image_view)
-    ImageView itemItemImageView;
-    @BindView(R.id.item_user_image_view2)
-    ImageView itemItemImageView2;
-    @BindView(R.id.item_user_image_view3)
-    ImageView itemItemImageView3;
-    @BindView(R.id.size_input)
-    EditText sizeInput;
-    @BindView(R.id.description)
-    EditText description;
-    @BindView(R.id.price_input)
-    EditText priceInput;
-    @BindView(R.id.color_selector)
-    ImageButton colorSelector;
-    @BindView(R.id.color_item)
-    Button colorItem;
-    @BindView(R.id.desc_item)
-    TextView descItem;
-    @BindView(R.id.price_item)
-    TextView priceItem;
-    @BindView(R.id.size_item)
-    TextView sizeItem;
-    ImageView imageView;
+    @BindView(R.id.shopName)
+    EditText shopName;
+    @BindView(R.id.phoneNumber)
+    EditText phoneNumber;
+    @BindView(R.id.address)
+    EditText address;
+    @BindView(R.id.city)
+    EditText city;
+    String downloadUrl;
     private final int PICK_IMAGE_REQUEST = 71;
     private final int GALLERY = 1, CAMERA = 2;
-
+    private FirebaseFirestore mDatabase;
     private static final String IMAGE_DIRECTORY = "/klive";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
-        Icepick.restoreInstanceState(this, savedInstanceState);
+        setContentView(R.layout.activity_add_shop);
         ButterKnife.bind(this);
+        mDatabase = FirebaseFirestore.getInstance();
     }
 
-    private void showColorDialog() {
-        ColorPickerDialog.Builder builder = new ColorPickerDialog.Builder(this, AlertDialog.THEME_DEVICE_DEFAULT_DARK);
-        builder.setTitle("ColorPicker Dialog");
-        builder.setPreferenceName("MyColorPickerDialog");
-        //builder.setFlagView(new CustomFlag(this, R.layout.layout_flag));
-        builder.setPositiveButton(getString(R.string.app_name), new ColorListener() {
-            @Override
-            public void onColorSelected(ColorEnvelope colorEnvelope) {
-              //  TextView textView = findViewById(R.id.textView);
-                //textView.setText("#" + colorEnvelope.getHtmlCode());
-
-                //LinearLayout linearLayout = findViewById(R.id.linearLayout);
-                colorItem.setBackgroundColor(colorEnvelope.getColor());
-            }
-        });
-        builder.setNegativeButton(getString(R.string.app_name), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                dialogInterface.dismiss();
-            }
-        });
-        builder.show();
-    }
-
-    @Override
-    protected void displayLoadingState() {
-
-    }
-    @OnTextChanged(R.id.price_input)
-    public void setPriceItem(){
-       // Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        priceItem.setText("Rs: "+priceInput.getText()+"/-");
-    }
-    @OnTextChanged(R.id.size_input)
-    public void setSizeItem(){
-        // Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        sizeItem.setText("Size:  "+sizeInput.getText());
-    }
-    @OnClick(R.id.color_selector)
-    public void colorSelector(){
-        Toast.makeText(this, "color dialog", Toast.LENGTH_LONG).show();
-        showColorDialog();
-    }
-
-    @OnTextChanged(R.id.description)
-    public void setDescItem(){
+    @OnTextChanged(R.id.shopName)
+    public void setShopName(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        descItem.setText(description.getText());
+        shop_name_text_view.setText(shopName.getText());
     }
-    @OnClick(R.id.item_user_image_view)
+    @OnTextChanged(R.id.address)
+    public void setAddress(){
+        Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
+        shop_address_text_view.setText(address.getText());
+    }
+    @OnClick(R.id.item_shop_image_view)
     public void addNewItemImage1(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        imageView=itemItemImageView;
         showPictureDialog();
     }
-    @OnClick(R.id.item_user_image_view2)
-    public void addNewItemImage2(){
-        imageView=itemItemImageView2;
-        Toast.makeText(this, "sdssd222", Toast.LENGTH_LONG).show();
-        showPictureDialog();
-    }
-    @OnClick(R.id.item_user_image_view3)
-    public void addNewItemImage3(){
-        imageView=itemItemImageView3;
-        Toast.makeText(this, "sdssd333", Toast.LENGTH_LONG).show();
-        showPictureDialog();
+    @OnClick(R.id.submit_shop)
+    public void submitShop(){
+        Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
+        addUserToDatabase();
     }
     private void showPictureDialog(){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
@@ -197,8 +146,54 @@ public class AddItemActivity extends BaseActivity {
                     String path = saveImage(bitmap);
                     //sendFileFirebase(storageRef,contentURI);
                     Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
-                    imageView.setImageBitmap(bitmap);
+                    //itemShopImageView.setImageBitmap(bitmap);
+                    RequestOptions requestOptions = new RequestOptions();
+                    requestOptions.placeholder(R.drawable.placeholder_user)
+                            .centerCrop()
+                            .dontAnimate();
+                    //.bitmapTransform(new CropCircleTransformation(context));
 
+                    Glide.with(this)
+                            .load(bitmap)
+                            .apply(requestOptions)
+                            .into(itemShopImageView);
+
+                    //Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
+
+                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+                    final StorageReference ref = storageRef.child("images/"+"sample.jpg");
+                    UploadTask uploadTask = ref.putFile(contentURI);
+
+// Register observers to listen for when the download is done or if it fails
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                Toast.makeText(AddShopActivity.this, "success.....!", Toast.LENGTH_SHORT).show();
+                                throw task.getException();
+                            }
+
+                            // Continue with the task to get the download URL
+
+                            return ref.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(AddShopActivity.this, "success.2222....!", Toast.LENGTH_SHORT).show();
+
+                                Uri downloadUri = task.getResult();
+                                downloadUrl = downloadUri.toString();
+                                Toast.makeText(AddShopActivity.this, downloadUri.toString(), Toast.LENGTH_SHORT).show();
+
+                            } else {
+                                // Handle failures
+                                // ...
+                            }
+                        }
+                    });
+                  // downloadUrl= urlTask.toString();
                 } catch (IOException e) {
                     e.printStackTrace();
                     Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
@@ -207,7 +202,7 @@ public class AddItemActivity extends BaseActivity {
 
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            imageView.setImageBitmap(thumbnail);
+            itemShopImageView.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
@@ -240,5 +235,21 @@ public class AddItemActivity extends BaseActivity {
             e1.printStackTrace();
         }
         return "";
+    }
+
+    private void addUserToDatabase() {
+       Shop newShop = new Shop(
+                shopName.getText().toString(),
+                address.getText().toString(),
+                phoneNumber.getText().toString(),
+                downloadUrl
+        );
+
+       /* String instanceId = FirebaseInstanceId.getInstance().getToken();
+        if (instanceId != null) {
+            user.setInstanceId(instanceId);
+        }*/
+        mDatabase.collection("shops")
+                .add(newShop);
     }
 }

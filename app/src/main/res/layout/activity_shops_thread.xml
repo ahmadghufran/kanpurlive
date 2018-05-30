@@ -35,4 +35,17 @@
         android:text="@string/empty_view_home"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_shop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:backgroundTint="@color/cardview_dark_background"
+        app:borderWidth="10dp"
+        app:elevation="10dp"
+        app:fabSize="normal"
+        android:layout_marginEnd="@dimen/simple_padding_medium"
+        android:layout_marginBottom="@dimen/simple_padding_large"
+        android:layout_gravity="end|bottom"
+        android:layout_marginRight="@dimen/simple_padding_medium" />
+
 </android.support.design.widget.CoordinatorLayout>

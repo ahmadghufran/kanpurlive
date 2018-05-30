@@ -21,7 +21,8 @@
         <activity android:name=".ShopsThread" />
         <activity android:name=".ItemThreadActivity" />
         <activity android:name=".AddItemActivity" />
-        <activity android:name=".BasicActivity"></activity>
+        <activity android:name=".BasicActivity" />
+        <activity android:name=".AddShopActivity"></activity>
     </application>
 
 </manifest>

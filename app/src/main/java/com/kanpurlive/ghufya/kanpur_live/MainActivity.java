@@ -37,7 +37,8 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             Toast.makeText(this, "You are welcome!", Toast.LENGTH_SHORT).show();
-
+            startActivity(new Intent(MainActivity.this, ShopsThread.class));
+/*
             AuthUI.getInstance()
                     .signOut(this)
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
                             startActivity(new Intent(MainActivity.this, WelcomeActivity.class));
                             finish();
                         }
-                    });
+                    });*/
 
         } else {
             List<AuthUI.IdpConfig> providers = Arrays.asList(
