@@ -45,4 +45,19 @@
     <color name="colorTextPrimary">#CCCCCC</color>
     <color name="colorTextSecondary">#FFFFFF</color>
 
+    <color name="colorShadow">#41000000</color>
+    <color name="colorBackground">#2b2b2b</color>
+    <color name="colorForeground">#3A3A3A</color>
+    <color name="colorTransparent">#00000000</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorEmptyStates">#40ffffff</color>
+    <color name="colorGrey">#BDBDBD</color>
+    <color name="colorRed">#F44336</color>
+    <color name="colorPink">#de7172</color>
+    <color name="colorAccentPressed">#eaa60c</color>
+    <color name="colorAccentIcons">#edb537</color>
+    <color name="bg_img">#d0f238</color>
+
+
 </resources>

@@ -40,4 +40,20 @@
         <item>Taylor</item>
         <item>Vegetables</item>
     </string-array>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <!--
+        This is the name that users will see when interacting with this channel.
+        It should describe the category of notifications that will be sent through this channel
+     -->
+    <string name="default_notification_channel_name" translatable="true">News</string>
+    <string name="error_google_sign_in">Can\'t sign in using Google</string>
+    <string name="button_invite">Invite</string>
+    <string name="hint_message">Type your message..</string>
+    <string name="error_loading_user">Couldn\'t load user</string>
+    <string name="today">Today</string>
+    <string name="yesterday">Yesterday</string>
+    <string name="empty_view_thread">Send the first message!</string>
+    <string name="error_sending_messages">Couldn\'t send message, please retry</string>
+    <string name="message_message_copied">Copied to clipboard</string>
+    <string name="clipboard_title_copied_message">Copied message</string>
 </resources>

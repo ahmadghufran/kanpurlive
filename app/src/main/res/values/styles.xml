@@ -26,4 +26,8 @@
         <item name="android:windowBackground">@color/material_green_50</item>
     </style>
 
+    <style name="SendFabTheme">
+        <item name="colorAccent">@color/colorForeground</item>
+    </style>
+
 </resources>

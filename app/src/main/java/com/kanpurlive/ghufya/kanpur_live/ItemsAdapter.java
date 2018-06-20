@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -19,6 +20,8 @@ import org.greenrobot.eventbus.EventBus;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.Optional;
 
 /*
  * Created by Mahmoud on 3/13/2017.
@@ -73,12 +76,25 @@ class ItemsAdapter extends FirestoreRecyclerAdapter<Item, ItemsAdapter.ItemViewH
             ButterKnife.bind(this, itemView);
             //itemItemParent.setOnClickListener(this);
         }
+        @Optional
+        @OnClick( R.id.chat_button)
+        public void chat(View v){
 
+            Item  item = getSnapshots().get(getLayoutPosition());
+            item.setPosition(getAdapterPosition());
+            EventBus.getDefault().post(item);
+            Toast.makeText(context, "char button....", Toast.LENGTH_SHORT).show();
+        }
         @Override
         public void onClick(View v) {
             switch (v.getId()) {
                 case R.id.item_user_parent:
                     EventBus.getDefault().post(getSnapshots().get(getLayoutPosition()).getUid());
+                    Toast.makeText(v.getContext(), "parent ....", Toast.LENGTH_SHORT).show();
+
+                    break;
+                case R.id.chat_button:
+                    Toast.makeText(v.getContext(), "char button....", Toast.LENGTH_SHORT).show();
                     break;
             }
         }

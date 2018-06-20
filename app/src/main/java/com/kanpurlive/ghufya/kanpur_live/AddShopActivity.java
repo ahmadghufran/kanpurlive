@@ -238,7 +238,7 @@ public class AddShopActivity extends AppCompatActivity {
     }
 
     private void addUserToDatabase() {
-       Shop newShop = new Shop(
+        Shop newShop = new Shop(
                 shopName.getText().toString(),
                 address.getText().toString(),
                 phoneNumber.getText().toString(),
@@ -249,7 +249,6 @@ public class AddShopActivity extends AppCompatActivity {
         if (instanceId != null) {
             user.setInstanceId(instanceId);
         }*/
-        mDatabase.collection("shops")
-                .add(newShop);
+        mDatabase.collection("shops").add(newShop);
     }
 }
