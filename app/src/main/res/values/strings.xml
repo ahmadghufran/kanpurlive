@@ -56,4 +56,7 @@
     <string name="error_sending_messages">Couldn\'t send message, please retry</string>
     <string name="message_message_copied">Copied to clipboard</string>
     <string name="clipboard_title_copied_message">Copied message</string>
+    <string name="baatKare">Baat Kare</string>
+    <string name="Rs">\u20B9</string>
+    <string name="search_title">shop khoje</string>
 </resources>

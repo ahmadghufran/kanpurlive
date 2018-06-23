@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TextView;
@@ -39,6 +40,9 @@ public class ItemThreadActivity extends AppCompatActivity {
     TextView emptyView;
     @BindView(R.id.add_item)
     FloatingActionButton addItem;
+    @BindView(R.id.toolbar_shop)
+    Toolbar toolbar;
+
     private FirebaseUser owner;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -70,6 +74,8 @@ public class ItemThreadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_thread);
         ButterKnife.bind(this);
         //setSupportActionBar(toolbar);
+        toolbar.setLogo(R.drawable.ic_indian_rupee);
+        setSupportActionBar(toolbar);
         position = getIntent().getIntExtra(Constants.ITEM_POSITION_EXTRA,-1);
         mDatabase = FirebaseFirestore.getInstance();
 
@@ -98,16 +104,6 @@ public class ItemThreadActivity extends AppCompatActivity {
 
         shopsRecycler.setLayoutManager(linearLayoutManager);
         shopsRecycler.setEmptyView(emptyView);
-        if(position!=-1){
-            shopsRecycler.getAdapter().registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                @Override
-                public void onItemRangeInserted(int positionStart, int itemCount) {
-                    super.onItemRangeInserted(positionStart, itemCount);
-                    shopsRecycler.smoothScrollToPosition(position);
-                }
-
-            });
-        }
     }
     private void initializeFirebaseAuthListener() {
         mAuth = FirebaseAuth.getInstance();

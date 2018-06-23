@@ -4,18 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/material_green_50"
     tools:context="com.kanpurlive.ghufya.kanpur_live.ShopsThread">
 
- <!--   <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/activity_main_toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </android.support.design.widget.AppBarLayout>-->
+    <include layout="@layout/toolbar" />
 
     <com.kanpurlive.ghufya.kanpur_live.EmptyStateRecyclerView
         android:id="@+id/activity_main_shops_recycler"
@@ -39,10 +31,11 @@
         android:id="@+id/add_shop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/cardview_dark_background"
-        app:borderWidth="10dp"
-        app:elevation="10dp"
+        app:borderWidth="8dp"
+        app:elevation="8dp"
         app:fabSize="normal"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/material_green_50"
         android:layout_marginEnd="@dimen/simple_padding_medium"
         android:layout_marginBottom="@dimen/simple_padding_large"
         android:layout_gravity="end|bottom"

@@ -16,7 +16,7 @@
                android:layout_height="wrap_content" />
 
        </android.support.design.widget.AppBarLayout>-->
-
+    <include layout="@layout/toolbar" />
     <com.kanpurlive.ghufya.kanpur_live.EmptyStateRecyclerView
         android:id="@+id/activity_item_thread_recycler"
         android:layout_width="match_parent"
@@ -41,7 +41,8 @@
         android:id="@+id/add_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:backgroundTint="@color/cardview_dark_background"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="@color/material_lime_a700"
         app:borderWidth="10dp"
         app:elevation="10dp"
         app:fabSize="normal"

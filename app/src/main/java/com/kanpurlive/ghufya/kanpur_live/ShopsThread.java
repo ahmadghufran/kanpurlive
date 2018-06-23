@@ -1,19 +1,22 @@
 package com.kanpurlive.ghufya.kanpur_live;
 
+import android.app.SearchManager;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -21,9 +24,6 @@ import com.google.firebase.iid.FirebaseInstanceId;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,11 +40,14 @@ public class ShopsThread extends AppCompatActivity {
     TextView emptyView;
     @BindView(R.id.add_shop)
     FloatingActionButton floatingActionButton;
+    @BindView(R.id.toolbar_shop)
+    Toolbar toolbar;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore mDatabase;
     ShopsAdapter adapter;
+
     @Override
     public void onStart() {
         super.onStart();
@@ -69,13 +72,25 @@ public class ShopsThread extends AppCompatActivity {
         setContentView(R.layout.activity_shops_thread);
         ButterKnife.bind(this);
         //setSupportActionBar(toolbar);
-
+        toolbar.setLogo(R.drawable.ic_indian_rupee);
+        setSupportActionBar(toolbar);
         mDatabase = FirebaseFirestore.getInstance();
 
         initializeFirebaseAuthListener();
         initializeUsersRecycler();
     }
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.options_menu, menu);
+        SearchManager searchManager =
+                (SearchManager) getSystemService(getApplicationContext().SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView) menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(getComponentName()));
+        return true;
+    }
     private void initializeUsersRecycler() {
         Query query  = mDatabase.collection("shops");
         FirestoreRecyclerOptions<Shop> options = new FirestoreRecyclerOptions.Builder<Shop>()

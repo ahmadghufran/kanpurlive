@@ -18,10 +18,13 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_welcome" />
-        <activity android:name=".ShopsThread" />
+        <activity android:name=".ShopsThread"
+            android:label="@string/title_activity_welcome">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
+        </activity>
         <activity android:name=".ItemThreadActivity" />
         <activity android:name=".AddItemActivity" />
-        <activity android:name=".BasicActivity" />
         <activity android:name=".AddShopActivity" />
         <activity android:name=".ChatThreadActivity"></activity>
     </application>
