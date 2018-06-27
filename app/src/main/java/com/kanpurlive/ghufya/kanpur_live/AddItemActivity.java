@@ -6,17 +6,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
+import android.opengl.Visibility;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,6 +32,7 @@ import com.skydoves.colorpickerpreference.ColorEnvelope;
 import com.skydoves.colorpickerpreference.ColorListener;
 import com.skydoves.colorpickerpreference.ColorPickerDialog;
 import com.skydoves.colorpickerpreference.ColorPickerView;
+import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -53,10 +61,10 @@ public class AddItemActivity extends BaseActivity {
     EditText description;
     @BindView(R.id.price_input)
     EditText priceInput;
-    @BindView(R.id.color_selector)
-    ImageButton colorSelector;
+   /* @BindView(R.id.color_selector)
+    ImageButton colorSelector;*/
     @BindView(R.id.color_item)
-    Button colorItem;
+    View colorItem;
     @BindView(R.id.desc_item)
     TextView descItem;
     @BindView(R.id.price_item)
@@ -64,17 +72,31 @@ public class AddItemActivity extends BaseActivity {
     @BindView(R.id.size_item)
     TextView sizeItem;
     ImageView imageView;
+    @BindView(R.id.size_input_layout)
+    TextInputLayout size_input_layout;
+    @BindView(R.id.descriptionLayout)
+    TextInputLayout descriptionLayout;
+    @BindView(R.id.price_input_layout)
+    TextInputLayout priceInput_layout;
+    @BindView(R.id.chat_button)
+    Button chatButton;
+
     private final int PICK_IMAGE_REQUEST = 71;
     private final int GALLERY = 1, CAMERA = 2;
 
     private static final String IMAGE_DIRECTORY = "/klive";
-
+    boolean isColorAdded, isPhoto1Added, isPhoto2Added, isPhoto3Added;
+    String photoName=null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
         Icepick.restoreInstanceState(this, savedInstanceState);
         ButterKnife.bind(this);
+        isColorAdded=false;
+        photoName=null;
+        chatButton.setVisibility(View.INVISIBLE);
+        colorItem.setBackgroundResource(R.drawable.ic_color_pick);
     }
 
     private void showColorDialog() {
@@ -89,12 +111,14 @@ public class AddItemActivity extends BaseActivity {
                 //textView.setText("#" + colorEnvelope.getHtmlCode());
 
                 //LinearLayout linearLayout = findViewById(R.id.linearLayout);
+                isColorAdded=true;
                 colorItem.setBackgroundColor(colorEnvelope.getColor());
             }
         });
         builder.setNegativeButton(getString(R.string.app_name), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                isColorAdded = false;
                 dialogInterface.dismiss();
             }
         });
@@ -115,7 +139,7 @@ public class AddItemActivity extends BaseActivity {
         // Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
         sizeItem.setText("Size:  "+sizeInput.getText());
     }
-    @OnClick(R.id.color_selector)
+    @OnClick(R.id.color_item)
     public void colorSelector(){
         Toast.makeText(this, "color dialog", Toast.LENGTH_LONG).show();
         showColorDialog();
@@ -130,17 +154,20 @@ public class AddItemActivity extends BaseActivity {
     public void addNewItemImage1(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
         imageView=itemItemImageView;
+        photoName="firstFrame";
         showPictureDialog();
     }
     @OnClick(R.id.item_user_image_view2)
     public void addNewItemImage2(){
         imageView=itemItemImageView2;
         Toast.makeText(this, "sdssd222", Toast.LENGTH_LONG).show();
+        photoName="secondFrame";
         showPictureDialog();
     }
     @OnClick(R.id.item_user_image_view3)
     public void addNewItemImage3(){
         imageView=itemItemImageView3;
+        photoName="thirdFrame";
         Toast.makeText(this, "sdssd333", Toast.LENGTH_LONG).show();
         showPictureDialog();
     }
@@ -198,6 +225,7 @@ public class AddItemActivity extends BaseActivity {
                     //sendFileFirebase(storageRef,contentURI);
                     Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     imageView.setImageBitmap(bitmap);
+                    setPhotoFlags();
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -210,6 +238,16 @@ public class AddItemActivity extends BaseActivity {
             imageView.setImageBitmap(thumbnail);
             saveImage(thumbnail);
             Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setPhotoFlags() {
+        switch(photoName){
+            case "firstFrame": isPhoto1Added=true; break;
+            case "secondFrame": isPhoto2Added=true; break;
+            case "thirdFrame": isPhoto3Added=true; break;
+            default: isPhoto1Added = isPhoto2Added = isPhoto3Added = false;
+                    photoName=null; break;
         }
     }
 
@@ -240,5 +278,118 @@ public class AddItemActivity extends BaseActivity {
             e1.printStackTrace();
         }
         return "";
+    }
+    @OnClick(R.id.submit_item)
+    public void submitShop(){
+        Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
+        submitForm();
+        //addItemToDatabase(); To Do
+    }
+    private void submitForm() {
+        if (!validateDescription()) {
+            return;
+        }
+
+        if (!validateSize()) {
+            return;
+        }
+
+        if (!validatePrice()) {
+            return;
+        }
+
+        if (!validateColor()) {
+            return;
+        }
+        if (!validatePhoto1()) {
+            return;
+        }
+        if (!validatePhoto2()) {
+            return;
+        }
+        if (!validatePhoto3()) {
+            return;
+        }
+        /*if (!validateShopPhoto()) {
+            return;
+        }
+        if (!validateShopType()) {
+            return;
+        }*/
+        Toast.makeText(getApplicationContext(), "Thank You!", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, ShopsThread.class));
+        finish();
+    }
+
+    private boolean validatePhoto1() {
+        if(!isPhoto1Added){
+            addNewItemImage1();
+            return false;
+        }
+        return true;
+    }
+    private boolean validatePhoto2() {
+        if(!isPhoto2Added){
+            addNewItemImage2();
+            return false;
+        }
+        return true;
+    }
+    private boolean validatePhoto3() {
+        if(!isPhoto3Added){
+            addNewItemImage3();
+            return false;
+        }
+        return true;
+    }
+    private boolean validateColor() {
+        if(!isColorAdded){
+            colorSelector();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validatePrice() {
+        String sizeInputStr = priceInput.getText().toString().trim();
+        if (sizeInputStr.isEmpty() || !TextUtils.isDigitsOnly(sizeInputStr)) {
+            priceInput_layout.setError(getString(R.string.err_msg_phone_number));
+            requestFocus(priceInput);
+            return false;
+        } else {
+            priceInput_layout.setErrorEnabled(false);
+        }
+    return true;
+    }
+
+    private boolean validateSize() {
+
+        String sizeInputStr = sizeInput.getText().toString().trim();
+        if (sizeInputStr.isEmpty() || !TextUtils.isDigitsOnly(sizeInputStr)) {
+            size_input_layout.setError(getString(R.string.err_msg_phone_number));
+            requestFocus(sizeInput);
+            return false;
+        } else {
+            size_input_layout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validateDescription() {
+        if (description.getText().toString().trim().isEmpty()) {
+            descriptionLayout.setError(getString(R.string.err_msg_name));
+            requestFocus(description);
+            return false;
+        } else {
+            descriptionLayout.setErrorEnabled(false);
+        }
+        return true;
+    }
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+
     }
 }

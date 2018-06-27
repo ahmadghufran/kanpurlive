@@ -5,108 +5,166 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/material_green_50"
-    tools:context="com.kanpurlive.ghufya.kanpur_live.AddItemActivity"
-    tools:layout_editor_absoluteY="25dp">
+    tools:context="com.kanpurlive.ghufya.kanpur_live.AddItemActivity">
 
-    <include
-        android:id="@+id/item_layout"
-        layout="@layout/items_in_shop" />
-
-    <EditText
-        android:id="@+id/description"
+    <android.support.v7.widget.CardView
+        android:id="@+id/card_item_layout"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginHorizontal="8dp"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/item_layout"
-        android:hint="add description"/>
-
-
-    <TextView
-        android:id="@+id/size_text"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="size:"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/size_input"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintEnd_toStartOf="@+id/size_input"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+        android:layout_margin="@dimen/simple_padding_medium"
+        app:cardCornerRadius="@dimen/simple_padding_large"
+        app:cardElevation="@dimen/simple_padding_large"
+        app:layout_constraintTop_toTopOf="parent"
+        app:cardBackgroundColor="@color/material_green_50"
+        android:background="@color/material_green_50">
 
-    <EditText
-        android:id="@+id/size_input"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:hint="size"
-        android:inputType="textPersonName"
-        android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintEnd_toStartOf="@+id/color_text"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@+id/size_text"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+        <include
+            android:id="@+id/item_layout"
+            layout="@layout/item_layout"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_marginHorizontal="@dimen/simple_padding_medium"
+            android:layout_marginVertical="@dimen/simple_padding_small"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.10" />
 
-    <EditText
-        android:id="@+id/price_input"
-        android:layout_width="50dp"
-        android:layout_height="wrap_content"
-        android:inputType="textPersonName"
-        android:hint="price"
-        android:textColor="@android:color/holo_green_dark"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintStart_toEndOf="@+id/price_text"
-        app:layout_constraintTop_toBottomOf="@+id/description" />
+    </android.support.v7.widget.CardView>
 
-    <TextView
-        android:id="@+id/price_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Price :"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/price_input"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintEnd_toStartOf="@+id/price_input"
-        app:layout_constraintStart_toEndOf="@+id/color_selector" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:background="@drawable/border"
+        android:layout_margin="4dp"
+        app:layout_constraintTop_toBottomOf="@+id/card_item_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_default="percent"
+        app:layout_constraintHeight_percent="0.21">
 
-    <TextView
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/descriptionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.45"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.99">
+
+            <EditText
+                android:id="@+id/description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:hint="add description"
+                android:inputType="textPersonName"
+                android:textColor="@android:color/holo_green_dark" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/price_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.40"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionLayout"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.25">
+
+            <EditText
+                android:id="@+id/price_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="price"
+                android:inputType="textPersonName"
+                android:textColor="@android:color/holo_green_dark" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/size_input_layout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.39"
+            app:layout_constraintHorizontal_chainStyle="spread"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/descriptionLayout"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.25">
+
+            <EditText
+                android:id="@+id/size_input"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="size"
+                android:inputType="textPersonName"
+                android:textColor="@android:color/holo_green_dark" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/submit_item"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@android:color/holo_green_light"
+            android:text="Done"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/price_input_layout"
+            app:layout_constraintHeight_default="percent"
+            app:layout_constraintHeight_percent="0.39"
+            app:layout_constraintStart_toEndOf="@+id/size_input_layout"
+            app:layout_constraintWidth_default="percent"
+            app:layout_constraintWidth_percent="0.30" />
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <!--    <TextView
         android:id="@+id/color_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="color :"
-        android:textSize="18sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/price_input"
-        app:layout_constraintEnd_toStartOf="@+id/color_selector"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        app:layout_constraintStart_toEndOf="@+id/size_input" />
+        android:layout_marginStart="8dp"
+        android:background="@color/material_green_50"
+        android:elevation="2dp"
+        android:paddingHorizontal="@dimen/simple_padding_small"
+        android:text="color"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@id/color_selector"
+        app:layout_constraintStart_toStartOf="@+id/color_selector" />-->
 
-    <ImageButton
-        android:id="@+id/color_selector"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:layout_marginVertical="@dimen/simple_padding_small"
-        android:src="@drawable/googleg_standard_color_18"
-        app:layout_constraintEnd_toStartOf="@+id/price_text"
-        app:layout_constraintHorizontal_chainStyle="spread"
-        app:layout_constraintTop_toBottomOf="@+id/description"
-        app:layout_constraintStart_toEndOf="@+id/color_text" />
-
-    <Button
-        android:id="@+id/button5"
+    <!--    <TextView
+        android:id="@+id/errorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@android:color/holo_green_light"
-        android:text="Done"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        android:text="Click me first"/>-->
+    <!--android:background="@drawable/popup_inline_error"-->
+
+ <!--   <ImageButton
+        android:id="@+id/color_selector"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="132dp"
+        android:layout_marginTop="352dp"
+        android:background="@drawable/border"
+        android:paddingHorizontal="@dimen/simple_padding_medium"
+        app:layout_constraintStart_toStartOf="@+id/item_layout"
+        app:layout_constraintTop_toTopOf="@+id/item_layout"
+        app:srcCompat="@drawable/ic_color_pick" />-->
+
+
+
 
 
 </android.support.constraint.ConstraintLayout>

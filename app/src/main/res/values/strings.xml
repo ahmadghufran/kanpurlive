@@ -57,6 +57,10 @@
     <string name="message_message_copied">Copied to clipboard</string>
     <string name="clipboard_title_copied_message">Copied message</string>
     <string name="baatKare">Baat Kare</string>
-    <string name="Rs">\u20B9</string>
+    <string name="Rs">\u20B91235</string>
     <string name="search_title">shop khoje</string>
+    <string name="err_msg_name">naam likhiye  shop ka</string>
+    <string name="err_msg_phone_number">phone numer likhiye</string>
+    <string name="err_msg_address">address likhiye</string>
+    <string name="err_msg_city">city ka naam likhiye</string>
 </resources>

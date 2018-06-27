@@ -12,76 +12,95 @@
         layout="@layout/item_shop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@+id/shopName"
-        app:layout_constraintEnd_toEndOf="@+id/shopName"
-        app:layout_constraintStart_toStartOf="@+id/shopName"
+        app:layout_constraintBottom_toTopOf="@+id/shopNameLayout"
+        app:layout_constraintEnd_toEndOf="@+id/shopNameLayout"
+        app:layout_constraintStart_toStartOf="@+id/shopNameLayout"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_chainStyle="spread" />
 
-    <EditText
-        android:id="@+id/shopName"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/shopNameLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Name"
-        app:layout_constraintBottom_toTopOf="@+id/spinner"
-        app:layout_constraintEnd_toEndOf="@+id/spinner"
-        app:layout_constraintStart_toStartOf="@+id/spinner"
+        app:layout_constraintBottom_toTopOf="@+id/shopType"
+        app:layout_constraintEnd_toEndOf="@+id/shopType"
+        app:layout_constraintStart_toStartOf="@+id/shopType"
         app:layout_constraintTop_toBottomOf="@+id/shop_layout"
-        app:layout_constraintVertical_chainStyle="spread" />
+        app:layout_constraintVertical_chainStyle="spread" >
 
+        <EditText
+            android:id="@+id/shopName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Name"
+            android:inputType="textPersonName" />
+    </android.support.design.widget.TextInputLayout>
     <Spinner
-        android:id="@+id/spinner"
+        android:id="@+id/shopType"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:entries="@array/shop_type_arrays"
         android:prompt="@string/country_prompt"
-        app:layout_constraintBottom_toTopOf="@+id/phoneNumber"
-        app:layout_constraintEnd_toEndOf="@+id/phoneNumber"
-        app:layout_constraintStart_toStartOf="@+id/phoneNumber"
-        app:layout_constraintTop_toBottomOf="@+id/shopName"
-        app:layout_constraintVertical_chainStyle="spread" />
-    
-    <EditText
-        android:id="@+id/phoneNumber"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
-        android:hint="phone number"
-        app:layout_constraintBottom_toTopOf="@+id/address"
-        app:layout_constraintEnd_toEndOf="@+id/address"
-        app:layout_constraintStart_toStartOf="@+id/address"
-        app:layout_constraintTop_toBottomOf="@+id/shopName"
-        app:layout_constraintVertical_chainStyle="spread" />
-    
-    
-    <EditText
-        android:id="@+id/address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:hint="Address"
-        app:layout_constraintBottom_toTopOf="@+id/city"
-        app:layout_constraintEnd_toEndOf="@+id/city"
-        app:layout_constraintStart_toStartOf="@+id/city"
-        app:layout_constraintTop_toBottomOf="@+id/phoneNumber"
+        app:layout_constraintBottom_toTopOf="@+id/phoneNumberLayout"
+        app:layout_constraintEnd_toEndOf="@+id/phoneNumberLayout"
+        app:layout_constraintStart_toStartOf="@+id/phoneNumberLayout"
+        app:layout_constraintTop_toBottomOf="@+id/shopNameLayout"
         app:layout_constraintVertical_chainStyle="spread" />
 
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/phoneNumberLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/addressLayout"
+        app:layout_constraintEnd_toEndOf="@+id/addressLayout"
+        app:layout_constraintStart_toStartOf="@+id/addressLayout"
+        app:layout_constraintTop_toBottomOf="@+id/shopNameLayout"
+        app:layout_constraintVertical_chainStyle="spread">
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="phone"
+            android:hint="phone number"/>
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/addressLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/cityLayout"
+        app:layout_constraintEnd_toEndOf="@+id/cityLayout"
+        app:layout_constraintStart_toStartOf="@+id/cityLayout"
+        app:layout_constraintTop_toBottomOf="@+id/phoneNumberLayout"
+        app:layout_constraintVertical_chainStyle="spread">
+        <EditText
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="textPersonName"
+            android:hint="Address" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/cityLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/submit_shop"
+        app:layout_constraintEnd_toEndOf="@+id/submit_shop"
+        app:layout_constraintStart_toStartOf="@+id/submit_shop"
+        app:layout_constraintTop_toBottomOf="@+id/addressLayout"
+        app:layout_constraintVertical_chainStyle="spread">
     <EditText
         android:id="@+id/city"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="textPersonName"
-        android:hint="Area"
-        app:layout_constraintBottom_toTopOf="@+id/submit_shop"
-        app:layout_constraintEnd_toEndOf="@+id/submit_shop"
-        app:layout_constraintStart_toStartOf="@+id/submit_shop"
-        app:layout_constraintTop_toBottomOf="@+id/address"
-        app:layout_constraintVertical_chainStyle="spread" />
+        android:hint="Area" />
+    </android.support.design.widget.TextInputLayout>
 
     <Button
         android:id="@+id/submit_shop"
@@ -89,7 +108,7 @@
         android:layout_height="wrap_content"
         android:text="Done"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/city"
+        app:layout_constraintTop_toBottomOf="@+id/cityLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
     

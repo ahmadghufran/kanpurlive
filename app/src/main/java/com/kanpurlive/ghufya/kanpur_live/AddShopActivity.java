@@ -9,11 +9,16 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,11 +64,26 @@ public class AddShopActivity extends AppCompatActivity {
     EditText address;
     @BindView(R.id.city)
     EditText city;
+
+    @BindView(R.id.shopNameLayout)
+    TextInputLayout shopNameLayout;
+    @BindView(R.id.phoneNumberLayout)
+    TextInputLayout phoneNumberLayout;
+    @BindView(R.id.addressLayout)
+    TextInputLayout addressLayout;
+    @BindView(R.id.cityLayout)
+    TextInputLayout cityLayout;
+
+    @BindView(R.id.shopType)
+    Spinner shopType;
+
     String downloadUrl;
     private final int PICK_IMAGE_REQUEST = 71;
     private final int GALLERY = 1, CAMERA = 2;
     private FirebaseFirestore mDatabase;
     private static final String IMAGE_DIRECTORY = "/klive";
+    boolean isImageAdded;
+    boolean  isGarmentShop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,17 +93,18 @@ public class AddShopActivity extends AppCompatActivity {
         mDatabase = FirebaseFirestore.getInstance();
     }
 
-    @OnTextChanged(R.id.shopName)
+    @OnTextChanged(value = R.id.shopName,  callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void setShopName(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
         shop_name_text_view.setText(shopName.getText());
+        validateName();
     }
-    @OnTextChanged(R.id.address)
+    @OnTextChanged(value = R.id.address,  callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
     public void setAddress(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
         shop_address_text_view.setText(address.getText());
     }
-    @OnClick(R.id.item_shop_image_view)
+    @OnClick(value = R.id.item_shop_image_view)
     public void addNewItemImage1(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
         showPictureDialog();
@@ -91,11 +112,12 @@ public class AddShopActivity extends AppCompatActivity {
     @OnClick(R.id.submit_shop)
     public void submitShop(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
+        submitForm();
         addUserToDatabase();
     }
     private void showPictureDialog(){
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
-        pictureDialog.setTitle("Select Action");
+        pictureDialog.setTitle("Shop ki photo");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
                 "Capture photo from camera" };
@@ -159,7 +181,7 @@ public class AddShopActivity extends AppCompatActivity {
                             .into(itemShopImageView);
 
                     //Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
-
+                    isImageAdded = true;
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference();
                     final StorageReference ref = storageRef.child("images/"+"sample.jpg");
                     UploadTask uploadTask = ref.putFile(contentURI);
@@ -170,6 +192,7 @@ public class AddShopActivity extends AppCompatActivity {
                         public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                             if (!task.isSuccessful()) {
                                 Toast.makeText(AddShopActivity.this, "success.....!", Toast.LENGTH_SHORT).show();
+                                isImageAdded = false;
                                 throw task.getException();
                             }
 
@@ -189,12 +212,14 @@ public class AddShopActivity extends AppCompatActivity {
 
                             } else {
                                 // Handle failures
+                                isImageAdded=false;
                                 // ...
                             }
                         }
                     });
                   // downloadUrl= urlTask.toString();
                 } catch (IOException e) {
+                    isImageAdded=false;
                     e.printStackTrace();
                     Toast.makeText(this, "Failed!", Toast.LENGTH_SHORT).show();
                 }
@@ -203,6 +228,7 @@ public class AddShopActivity extends AppCompatActivity {
         } else if (requestCode == CAMERA) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             itemShopImageView.setImageBitmap(thumbnail);
+            isImageAdded = true;
             saveImage(thumbnail);
             Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
@@ -250,5 +276,142 @@ public class AddShopActivity extends AppCompatActivity {
             user.setInstanceId(instanceId);
         }*/
         mDatabase.collection("shops").add(newShop);
+    }
+
+    /**
+     * Validating form
+     */
+    private void submitForm() {
+        if (!validateName()) {
+            return;
+        }
+
+        if (!validatePhoneNumber()) {
+            return;
+        }
+
+        if (!validateAddress()) {
+            return;
+        }
+
+        if (!validateCity()) {
+            return;
+        }
+        if (!validateShopPhoto()) {
+            return;
+        }
+        if (!validateShopType()) {
+            return;
+        }
+        Toast.makeText(getApplicationContext(), "Thank You!", Toast.LENGTH_SHORT).show();
+        startActivity(new Intent(this, ShopsThread.class));
+        finish();
+    }
+
+    private boolean validateShopType() {
+        if (shopType.getSelectedItem().toString().trim().equals("Garment")) {
+            Toast.makeText(this, "Error", Toast.LENGTH_SHORT).show();
+            showShopTypeDialog();
+            return isGarmentShop;
+        }
+        return true;
+    }
+
+    private void showShopTypeDialog(){
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
+        pictureDialog.setTitle("Garment shop hai ?");
+        String[] pictureDialogItems = {
+                "han",
+                "nahi" };
+
+
+        pictureDialog.setItems(pictureDialogItems,
+                new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                setGarmentShop(true);
+                                break;
+                            case 1:
+                                setGarmentShop(false);
+                                break;
+                        }
+                    }
+                });
+        pictureDialog.show();
+
+    }
+
+    private void setGarmentShop(boolean b) {
+        isGarmentShop = b;
+    }
+
+    private boolean validateShopPhoto() {
+        if(itemShopImageView.getDrawable()==null || !isImageAdded){
+            Toast.makeText(getApplicationContext(), "Photo lagaye shop ki", Toast.LENGTH_SHORT).show();
+            showPictureDialog();
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+
+    private boolean validateName() {
+        if (shopName.getText().toString().trim().isEmpty()) {
+            shopNameLayout.setError(getString(R.string.err_msg_name));
+            requestFocus(shopName);
+            return false;
+        } else {
+            shopNameLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validatePhoneNumber() {
+        String phonNumberStr = phoneNumber.getText().toString().trim();
+
+        if (phonNumberStr.isEmpty() || !TextUtils.isDigitsOnly(phonNumberStr)) {
+            phoneNumberLayout.setError(getString(R.string.err_msg_phone_number));
+            requestFocus(phoneNumber);
+            return false;
+        } else {
+            phoneNumberLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+    private boolean validateAddress() {
+        if (address.getText().toString().trim().isEmpty()) {
+            addressLayout.setError(getString(R.string.err_msg_address));
+            requestFocus(address);
+            return false;
+        } else {
+            addressLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+    private boolean validateCity() {
+        if (city.getText().toString().trim().isEmpty()) {
+            cityLayout.setError(getString(R.string.err_msg_city));
+            requestFocus(city);
+            return false;
+        } else {
+            cityLayout.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+
+
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 }
