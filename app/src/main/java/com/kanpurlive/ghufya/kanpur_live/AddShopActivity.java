@@ -13,6 +13,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -41,6 +42,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -81,6 +83,7 @@ public class AddShopActivity extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 71;
     private final int GALLERY = 1, CAMERA = 2;
     private FirebaseFirestore mDatabase;
+    StorageReference storageRef;
     private static final String IMAGE_DIRECTORY = "/klive";
     boolean isImageAdded;
     boolean  isGarmentShop;
@@ -91,6 +94,7 @@ public class AddShopActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_shop);
         ButterKnife.bind(this);
         mDatabase = FirebaseFirestore.getInstance();
+        storageRef  = FirebaseStorage.getInstance().getReference();
     }
 
     @OnTextChanged(value = R.id.shopName,  callback = OnTextChanged.Callback.AFTER_TEXT_CHANGED)
@@ -182,41 +186,8 @@ public class AddShopActivity extends AppCompatActivity {
 
                     //Uri file = Uri.fromFile(new File("path/to/images/rivers.jpg"));
                     isImageAdded = true;
-                    StorageReference storageRef = FirebaseStorage.getInstance().getReference();
-                    final StorageReference ref = storageRef.child("images/"+"sample.jpg");
-                    UploadTask uploadTask = ref.putFile(contentURI);
 
-// Register observers to listen for when the download is done or if it fails
-                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                        @Override
-                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(AddShopActivity.this, "success.....!", Toast.LENGTH_SHORT).show();
-                                isImageAdded = false;
-                                throw task.getException();
-                            }
-
-                            // Continue with the task to get the download URL
-
-                            return ref.getDownloadUrl();
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Uri> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(AddShopActivity.this, "success.2222....!", Toast.LENGTH_SHORT).show();
-
-                                Uri downloadUri = task.getResult();
-                                downloadUrl = downloadUri.toString();
-                                Toast.makeText(AddShopActivity.this, downloadUri.toString(), Toast.LENGTH_SHORT).show();
-
-                            } else {
-                                // Handle failures
-                                isImageAdded=false;
-                                // ...
-                            }
-                        }
-                    });
+                    uploadFileToStorage(contentURI);
                   // downloadUrl= urlTask.toString();
                 } catch (IOException e) {
                     isImageAdded=false;
@@ -232,6 +203,42 @@ public class AddShopActivity extends AppCompatActivity {
             saveImage(thumbnail);
             Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void uploadFileToStorage(Uri contentURI) {
+
+        final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+        final StorageReference ref = storageRef.child("images/"+"sample_"+name+".jpg");
+        UploadTask uploadTask = ref.putFile(contentURI);
+
+// Register observers to listen for when the download is done or if it fails
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(AddShopActivity.this, "success.....!", Toast.LENGTH_SHORT).show();
+                    isImageAdded = false;
+                    throw task.getException();
+                }
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(AddShopActivity.this, "success.2222....!", Toast.LENGTH_SHORT).show();
+
+                    Uri downloadUri = task.getResult();
+                    downloadUrl = downloadUri.toString();
+                    Toast.makeText(AddShopActivity.this, downloadUri.toString(), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle failures
+                    isImageAdded=false;
+                    // ...
+                }
+            }
+        });
     }
 
     public String saveImage(Bitmap myBitmap) {

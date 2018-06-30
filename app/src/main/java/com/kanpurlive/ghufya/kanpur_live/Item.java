@@ -33,11 +33,8 @@ public class Item {
         this.photoUrl = photoUrl;
     }
 
-    public Item(String displayName, String photoUrl1, String photoUrl2, String photoUrl3, String size, String description, String type, String color, int price, int like) {
+    public Item(String displayName, String size, String description, String type, String color, int price, int like) {
         this.displayName = displayName;
-        this.photoUrl1 = photoUrl1;
-        this.photoUrl2 = photoUrl2;
-        this.photoUrl3 = photoUrl3;
         this.size = size;
         this.description = description;
         this.type = type;
@@ -144,6 +141,18 @@ public class Item {
 
     public String getUid() {
         return uid;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
     }
 
     public String getPhotoUrl() {

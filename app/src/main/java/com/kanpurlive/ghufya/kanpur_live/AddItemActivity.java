@@ -1,44 +1,59 @@
 package com.kanpurlive.ghufya.kanpur_live;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.opengl.Visibility;
+import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.design.widget.Snackbar;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.text.format.DateFormat;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.kanpurlive.ghufya.kanpur_live.R;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 import com.skydoves.colorpickerpreference.ColorEnvelope;
 import com.skydoves.colorpickerpreference.ColorListener;
 import com.skydoves.colorpickerpreference.ColorPickerDialog;
-import com.skydoves.colorpickerpreference.ColorPickerView;
-import com.tooltip.Tooltip;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -80,6 +95,16 @@ public class AddItemActivity extends BaseActivity {
     TextInputLayout priceInput_layout;
     @BindView(R.id.chat_button)
     Button chatButton;
+    @BindView(R.id.loading)
+    ProgressBar spinner;
+    @BindView(R.id.grayed_layout)
+    LinearLayout grayed_layout;
+    @BindView(R.id.grayed_layout_small)
+    LinearLayout grayed_layout_small;
+
+    String urlStr=null;
+    String downloadUrl=null;
+    String colorHtml=null;
 
     private final int PICK_IMAGE_REQUEST = 71;
     private final int GALLERY = 1, CAMERA = 2;
@@ -87,16 +112,44 @@ public class AddItemActivity extends BaseActivity {
     private static final String IMAGE_DIRECTORY = "/klive";
     boolean isColorAdded, isPhoto1Added, isPhoto2Added, isPhoto3Added;
     String photoName=null;
+    String localPhoto1Url = null;
+    String localPhoto2Url = null;
+    String localPhoto3Url = null;
+    StorageReference storageRef;
+    private FirebaseFirestore mDatabase;
+    Item item;
+    int count=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_item);
         Icepick.restoreInstanceState(this, savedInstanceState);
         ButterKnife.bind(this);
+        count =0;
         isColorAdded=false;
         photoName=null;
         chatButton.setVisibility(View.INVISIBLE);
         colorItem.setBackgroundResource(R.drawable.ic_color_pick);
+
+        storageRef  = FirebaseStorage.getInstance().getReference();
+        mDatabase = FirebaseFirestore.getInstance();
+
+        localPhoto1Url = null;
+        localPhoto2Url = null;
+        localPhoto3Url = null;
+        colorHtml=null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "nahi hai granted Saved!", Toast.LENGTH_SHORT).show();
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        123);
+
+                return;
+            }
+        }
     }
 
     private void showColorDialog() {
@@ -112,6 +165,7 @@ public class AddItemActivity extends BaseActivity {
 
                 //LinearLayout linearLayout = findViewById(R.id.linearLayout);
                 isColorAdded=true;
+                colorHtml = colorEnvelope.getColorHtml();
                 colorItem.setBackgroundColor(colorEnvelope.getColor());
             }
         });
@@ -132,12 +186,12 @@ public class AddItemActivity extends BaseActivity {
     @OnTextChanged(R.id.price_input)
     public void setPriceItem(){
        // Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        priceItem.setText("Rs: "+priceInput.getText()+"/-");
+        priceItem.setText(priceInput.getText()+"/-");
     }
     @OnTextChanged(R.id.size_input)
     public void setSizeItem(){
         // Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
-        sizeItem.setText("Size:  "+sizeInput.getText());
+        sizeItem.setText(sizeInput.getText());
     }
     @OnClick(R.id.color_item)
     public void colorSelector(){
@@ -222,10 +276,17 @@ public class AddItemActivity extends BaseActivity {
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     String path = saveImage(bitmap);
-                    //sendFileFirebase(storageRef,contentURI);
-                    Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
                     imageView.setImageBitmap(bitmap);
                     setPhotoFlags();
+                    urlStr = getRealPathFromURI(contentURI.toString());
+                    setLocalImageUrl();
+
+/*
+                    String compressedFileUrl = decodeFile(urlStr,800,800);
+                    uploadFileToStorage(Uri.fromFile(new File(compressedFileUrl)));*/
+                    //sendFileFirebase(storageRef,contentURI);
+                    Toast.makeText(this, "Image Saved!", Toast.LENGTH_SHORT).show();
+
 
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -241,16 +302,136 @@ public class AddItemActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 123: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast.makeText(this, "granted Saved!", Toast.LENGTH_SHORT).show();
+                    // permission was granted, yay! do the
+                    // calendar task you need to do.
+                    //decodeFile(urlStr,800,800);
+
+
+                } else {
+                    Toast.makeText(this, "permission nahi mili abhi !", Toast.LENGTH_SHORT).show();
+                    finish();
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'switch' lines to check for other
+            // permissions this app might request
+        }
+    }
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private  boolean checkAndRequestPermissions() {
+        //int camera = ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA);
+        int storage = ContextCompat.checkSelfPermission(this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+
+        List<String> listPermissionsNeeded = new ArrayList<>();
+
+       /* if (camera != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.CAMERA);
+        }*/
+        if (storage != PackageManager.PERMISSION_GRANTED) {
+            listPermissionsNeeded.add(android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+
+        if (!listPermissionsNeeded.isEmpty())
+        {
+            ActivityCompat.requestPermissions(this,listPermissionsNeeded.toArray
+                    (new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
+    private String decodeFile(String path,int DESIREDWIDTH, int DESIREDHEIGHT) {
+        String strMyImagePath = null;
+        Bitmap scaledBitmap = null;
+
+        try {
+            // Part 1: Decode image
+            Bitmap unscaledBitmap = ScalingUtilities.decodeFile(path, DESIREDWIDTH, DESIREDHEIGHT, ScalingUtilities.ScalingLogic.FIT);
+
+            if (!(unscaledBitmap.getWidth() <= DESIREDWIDTH && unscaledBitmap.getHeight() <= DESIREDHEIGHT)) {
+                // Part 2: Scale image
+                scaledBitmap = ScalingUtilities.createScaledBitmap(unscaledBitmap, DESIREDWIDTH, DESIREDHEIGHT, ScalingUtilities.ScalingLogic.FIT);
+            } else {
+                unscaledBitmap.recycle();
+                return path;
+            }
+
+            // Store to tmp file
+
+            String extr = Environment.getExternalStorageDirectory().toString();
+            File mFolder = new File(extr + "/TMMFOLDER");
+            if (!mFolder.exists()) {
+                mFolder.mkdir();
+            }
+            final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+            String s = name+ ++count+".png";
+
+            File f = new File(mFolder.getAbsolutePath(), s);
+
+            strMyImagePath = f.getAbsolutePath();
+            FileOutputStream fos = null;
+            try {
+                fos = new FileOutputStream(f);
+                scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+                fos.flush();
+                fos.close();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (Exception e) {
+
+                e.printStackTrace();
+            }
+
+            scaledBitmap.recycle();
+        } catch (Throwable e) {
+        }
+
+        if (strMyImagePath == null) {
+            return path;
+        }
+        return strMyImagePath;
+    }
+
+    private String getRealPathFromURI(String contentURI) {
+        Uri contentUri = Uri.parse(contentURI);
+        Cursor cursor = getContentResolver().query(contentUri, null, null, null, null);
+        if (cursor == null) {
+            return contentUri.getPath();
+        } else {
+            cursor.moveToFirst();
+            int index = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            return cursor.getString(index);
+        }
+    }
     private void setPhotoFlags() {
         switch(photoName){
             case "firstFrame": isPhoto1Added=true; break;
             case "secondFrame": isPhoto2Added=true; break;
             case "thirdFrame": isPhoto3Added=true; break;
             default: isPhoto1Added = isPhoto2Added = isPhoto3Added = false;
-                    photoName=null; break;
+                photoName=null; break;
         }
     }
-
+    private void setPhotoFlagsOnFail() {
+        switch(photoName){
+            case "firstFrame": isPhoto1Added=true; break;
+            case "secondFrame": isPhoto2Added=true; break;
+            case "thirdFrame": isPhoto3Added=true; break;
+            default: isPhoto1Added = isPhoto2Added = isPhoto3Added = false;
+                photoName=null; break;
+        }
+    }
     public String saveImage(Bitmap myBitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
@@ -272,7 +453,6 @@ public class AddItemActivity extends BaseActivity {
                     new String[]{"image/jpeg"}, null);
             fo.close();
             Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
-
             return f.getAbsolutePath();
         } catch (IOException e1) {
             e1.printStackTrace();
@@ -282,6 +462,7 @@ public class AddItemActivity extends BaseActivity {
     @OnClick(R.id.submit_item)
     public void submitShop(){
         Toast.makeText(this, "sdssd", Toast.LENGTH_LONG).show();
+
         submitForm();
         //addItemToDatabase(); To Do
     }
@@ -316,9 +497,64 @@ public class AddItemActivity extends BaseActivity {
         if (!validateShopType()) {
             return;
         }*/
-        Toast.makeText(getApplicationContext(), "Thank You!", Toast.LENGTH_SHORT).show();
-        startActivity(new Intent(this, ShopsThread.class));
-        finish();
+        spinner.setVisibility(View.VISIBLE);
+        grayed_layout.setVisibility(View.VISIBLE);
+        grayed_layout_small.setVisibility(View.VISIBLE);
+
+        item = new Item(null, sizeInput.getText().toString(), description.getText().toString(), null, colorHtml,
+                Integer.parseInt(priceInput.getText().toString()),0);
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        final ArrayList<Task<Uri>> tasks = new ArrayList<>();
+
+        String compressedFileUrl = decodeFile(localPhoto1Url,800,800);
+
+        String compressedFile2Url = decodeFile(localPhoto2Url,800,800);
+
+        String compressedFile3Url = decodeFile(localPhoto3Url,800,800);
+
+        tasks.add(uploadFileToStorage(Uri.fromFile(new File(compressedFileUrl)), "firstFrame"));
+
+        tasks.add(uploadFileToStorage(Uri.fromFile(new File(compressedFile2Url)),"secondFrame"));
+
+        tasks.add(uploadFileToStorage(Uri.fromFile(new File(compressedFile3Url)), "thirdFrame"));
+
+        Tasks.whenAll(tasks).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("AddItemActivity", "ALL Images HAVE BEEN UPLOADED");
+                addItemToDatabase();
+
+            }
+        });
+
+    }
+    private void addItemToDatabase() {
+
+       /* String instanceId = FirebaseInstanceId.getInstance().getToken();
+        if (instanceId != null) {
+            user.setInstanceId(instanceId);
+        }*/
+        String ownerId = FirebaseAuth.getInstance().getUid();
+        item.setUid(ownerId);
+        mDatabase.collection("items")
+                .document(ownerId)
+                .collection("itemCollection")
+                .add(item).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("AddItemActivity", "ALL TASKS HAVE BEEN UPLOADED");
+                        //dialog.cancel();
+                        spinner.setVisibility(View.GONE);
+                        grayed_layout.setVisibility(View.GONE);
+                        grayed_layout_small.setVisibility(View.GONE);
+                        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        Toast.makeText(getApplicationContext(), "Thank You!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(AddItemActivity.this, ShopsThread.class));
+                        finish();
+                    }
+                });
     }
 
     private boolean validatePhoto1() {
@@ -372,10 +608,8 @@ public class AddItemActivity extends BaseActivity {
         } else {
             size_input_layout.setErrorEnabled(false);
         }
-
         return true;
     }
-
     private boolean validateDescription() {
         if (description.getText().toString().trim().isEmpty()) {
             descriptionLayout.setError(getString(R.string.err_msg_name));
@@ -392,4 +626,65 @@ public class AddItemActivity extends BaseActivity {
         }
 
     }
+    private Task<Uri> uploadFileToStorage(Uri contentURI, final String frameName) {
+
+        final String name = DateFormat.format("yyyy-MM-dd_hhmmss", new Date()).toString();
+        final StorageReference ref = storageRef.child("images/"+"sample_"+name+ ++count+".jpg");
+        UploadTask uploadTask = ref.putFile(contentURI);
+// Register observers to listen for when the download is done or if it fails
+        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            @Override
+            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(AddItemActivity.this, "success.....!", Toast.LENGTH_SHORT).show();
+                    setPhotoFlagsOnFail();
+                    throw task.getException();
+                }
+                setPhotoFlags();
+                return ref.getDownloadUrl();
+            }
+        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(AddItemActivity.this, "success.2222....!", Toast.LENGTH_SHORT).show();
+
+                    Uri downloadUri = task.getResult();
+                    downloadUrl = downloadUri.toString();
+                    photoName = frameName;
+                    setPhotoFlags();
+                    setDownloadUrl();
+                    Toast.makeText(AddItemActivity.this, downloadUri.toString(), Toast.LENGTH_SHORT).show();
+
+                } else {
+                    // Handle failures
+                    setPhotoFlagsOnFail();
+                    // ...
+                }
+            }
+        });
+        return urlTask;
+    }
+
+    private void setDownloadUrl() {
+        switch(photoName){
+            case "firstFrame":  item.setPhotoUrl1(downloadUrl); break;
+            case "secondFrame": item.setPhotoUrl2(downloadUrl); isPhoto2Added=true; break;
+            case "thirdFrame": item.setPhotoUrl3(downloadUrl); isPhoto3Added=true; break;
+            default: isPhoto1Added = isPhoto2Added = isPhoto3Added = false;
+                photoName=null; break;
+        }
+    }
+
+    private void setLocalImageUrl() {
+        switch(photoName){
+            case "firstFrame":  localPhoto1Url = urlStr; break;
+            case "secondFrame": localPhoto2Url = urlStr; break;
+            case "thirdFrame": localPhoto3Url = urlStr;  break;
+            default: isPhoto1Added = isPhoto2Added = isPhoto3Added = false;
+                photoName=null; break;
+        }
+    }
+
 }

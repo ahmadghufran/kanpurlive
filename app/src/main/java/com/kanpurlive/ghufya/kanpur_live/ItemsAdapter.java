@@ -1,7 +1,9 @@
 package com.kanpurlive.ghufya.kanpur_live;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.StringRes;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -64,12 +66,14 @@ class ItemsAdapter extends FirestoreRecyclerAdapter<Item, ItemsAdapter.ItemViewH
         ImageView itemItemImageView2;
         @BindView(R.id.item_user_image_view3)
         ImageView itemItemImageView3;
-/*        @BindView(R.id.item_friend_name_text_view)
-        TextView itemFriendNameTextView;
-        @BindView(R.id.item_friend_email_text_view)
-        TextView itemFriendEmailTextView;
-        @BindView(R.id.item_user_parent)
-        CardView itemItemParent;*/
+        @BindView(R.id.price_item)
+        TextView priceItem;
+        @BindView(R.id.size_item)
+        TextView sizeItem;
+        @BindView(R.id.desc_item)
+        TextView descItem;
+        @BindView(R.id.color_item)
+        View colorItem;
 
         ItemViewHolder(View itemView) {
             super(itemView);
@@ -99,7 +103,7 @@ class ItemsAdapter extends FirestoreRecyclerAdapter<Item, ItemsAdapter.ItemViewH
             }
         }
 
-        void setItem(Item user) {
+        void setItem(Item item) {
             //itemFriendNameTextView.setText(user.getDisplayName());
             //itemFriendEmailTextView.setText(user.getEmail());
 
@@ -108,17 +112,22 @@ class ItemsAdapter extends FirestoreRecyclerAdapter<Item, ItemsAdapter.ItemViewH
                     .centerCrop()
                     .dontAnimate();
             //.bitmapTransform(new CropCircleTransformation(context));
-            itemItemImageView.getLayoutParams().height= itemItemImageView.getLayoutParams().width;
+            //itemItemImageView.getLayoutParams().height= itemItemImageView.getLayoutParams().width;
+            colorItem.setBackgroundColor(Color.parseColor("#"+item.getColor()));
+            sizeItem.setText(item.getSize());
+            descItem.setText(item.getDescription());
+            priceItem.setText("\u20B9"+item.getPrice());
+
             Glide.with(context)
-                    .load(user.getPhotoUrl())
+                    .load(item.getPhotoUrl1())
                     .apply(requestOptions)
                     .into(itemItemImageView);
             Glide.with(context)
-                    .load(user.getPhotoUrl())
+                    .load(item.getPhotoUrl2())
                     .apply(requestOptions)
                     .into(itemItemImageView2);
             Glide.with(context)
-                    .load(user.getPhotoUrl())
+                    .load(item.getPhotoUrl3())
                     .apply(requestOptions)
                     .into(itemItemImageView3);
         }

@@ -172,7 +172,7 @@ class MessagesAdapter extends FirestoreRecyclerAdapter<Message, MessagesAdapter.
             }
             if (message.getFile() != null) {
                 //viewHolder.tvIsLocation(View.GONE);
-                setIvChatPhoto(message.getFile().getItem().getPhotoUrl());
+                setIvChatPhoto(message.getFile().getItem().getPhotoUrl1());
             }
         }
 

@@ -14,8 +14,11 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -30,6 +33,7 @@ import java.util.Date;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import icepick.State;
 
 public class ItemThreadActivity extends AppCompatActivity {
 
@@ -48,7 +52,10 @@ public class ItemThreadActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore mDatabase;
     ItemsAdapter adapter;
+    @State
+    String userUid;
     int position=-1;
+    private Shop shopUser;
 
     @Override
     public void onStart() {
@@ -74,18 +81,34 @@ public class ItemThreadActivity extends AppCompatActivity {
         setContentView(R.layout.activity_item_thread);
         ButterKnife.bind(this);
         //setSupportActionBar(toolbar);
+        if (savedInstanceState == null) {
+            userUid = getIntent().getStringExtra(Constants.USER_ID_EXTRA);
+        }
+        shopUser = null;
         toolbar.setLogo(R.drawable.ic_indian_rupee);
         setSupportActionBar(toolbar);
+
         position = getIntent().getIntExtra(Constants.ITEM_POSITION_EXTRA,-1);
         mDatabase = FirebaseFirestore.getInstance();
 
+        loadUserDetails();
         initializeFirebaseAuthListener();
         initializeUsersRecycler();
 
     }
-
+    private void loadUserDetails() {
+        DocumentReference docRef = mDatabase.collection("shops").document(userUid);
+        docRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                shopUser = documentSnapshot.toObject(Shop.class);
+                toolbar.setTitle(shopUser.getDisplayName());
+                //initializeMessagesRecycler();
+            }
+        });
+    }
     private void initializeUsersRecycler() {
-        Query query = mDatabase.collection("shops");
+        Query query = mDatabase.collection("items").document(userUid).collection("itemCollection");
         FirestoreRecyclerOptions<Item> options = new FirestoreRecyclerOptions.Builder<Item>()
                 .setQuery(query, Item.class)
                 .build();

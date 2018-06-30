@@ -77,11 +77,12 @@
         app:layout_constraintWidth_percent="0.22" />
 
     <Button
+
         android:id="@+id/chat_button"
         style="?android:attr/actionOverflowButtonStyle"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/material_lime_a700"
+        android:background="@drawable/border"
         android:drawableLeft="@drawable/ic_chat_24dp"
         android:text="@string/baatKare"
         android:textAlignment="center"
@@ -140,7 +141,9 @@
         app:layout_constraintStart_toEndOf="@+id/size_item"
         app:layout_constraintTop_toTopOf="@+id/guideline3"
         app:layout_constraintWidth_default="percent"
-        app:layout_constraintWidth_percent="0.16" />
+        app:layout_constraintWidth_percent="0.16"
+        android:layout_marginRight="4dp"
+        android:layout_marginLeft="8dp" />
 
     <TextView
         android:id="@+id/size_item"
