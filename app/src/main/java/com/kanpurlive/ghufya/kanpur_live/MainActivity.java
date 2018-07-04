@@ -14,8 +14,12 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kanpurlive.ghufya.kanpur_live.intro.WelcomeActivity;
 
 import java.util.Arrays;
@@ -29,15 +33,20 @@ public class MainActivity extends AppCompatActivity {
     private static final int RC_SIGN_IN = 123;
     private static final String TAG = "";
     @BindView(R.id.root) View mRootView;
+    private FirebaseFirestore mDatabase;
+    FirebaseAuth auth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        FirebaseAuth auth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseFirestore.getInstance();
+        auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             Toast.makeText(this, "You are welcome!", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(MainActivity.this, ShopsThread.class));
+            finish();
+
 /*
             AuthUI.getInstance()
                     .signOut(this)
@@ -60,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
             startActivityForResult(
                     AuthUI.getInstance()
                             .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(false)
                             .setAvailableProviders(providers)
                             .setTheme(R.style.GreenTheme)
                             .setLogo(R.mipmap.ic_launcher)
@@ -67,6 +77,31 @@ public class MainActivity extends AppCompatActivity {
                     RC_SIGN_IN);
         }
 
+    }
+
+    private void addUserToDatabase(FirebaseUser currentUser) {
+        Shop user = new Shop(
+                currentUser.getDisplayName(),
+                currentUser.getEmail(),
+                currentUser.getUid(),
+                currentUser.getPhotoUrl() == null ? "" : currentUser.getPhotoUrl().toString()
+        );
+
+        String instanceId = FirebaseInstanceId.getInstance().getToken();
+        if (instanceId != null) {
+            user.setInstanceId(instanceId);
+        }
+        mDatabase.collection("shops")
+                .document(user.getUid()).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                startActivity(new Intent(MainActivity.this, ShopsThread.class));
+                finish();
+            }
+        });
+    }
+    private void intstantiateUser(){
+        auth = FirebaseAuth.getInstance();
     }
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -77,6 +112,8 @@ public class MainActivity extends AppCompatActivity {
             // Successfully signed in
             if (resultCode == RESULT_OK) {
                 //startActivity(SignedInActivity.createIntent(this, response));
+                intstantiateUser();
+                addUserToDatabase(auth.getCurrentUser());
                 startActivity(new Intent(MainActivity.this, ShopsThread.class));
 
                 finish();

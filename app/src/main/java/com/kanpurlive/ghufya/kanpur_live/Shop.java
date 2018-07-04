@@ -11,7 +11,7 @@ public class Shop {
     private String email;
     private String uid;
     private String photoUrl;
-
+    private boolean seller;
     private String instanceId;
 
     public Shop() {
@@ -22,6 +22,14 @@ public class Shop {
         this.email = email;
         this.uid = uid;
         this.photoUrl = photoUrl;
+    }
+
+    public boolean isSeller() {
+        return seller;
+    }
+
+    public void setSeller(boolean seller) {
+        this.seller = seller;
     }
 
     public void setInstanceId(String instanceId) {

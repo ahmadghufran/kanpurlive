@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/item_user_parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/simple_padding_small"
+    app:cardElevation="@dimen/simple_padding_medium"
     android:foreground="?attr/selectableItemBackground"
     android:padding="@dimen/simple_padding_tiny">
 

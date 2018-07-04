@@ -1,6 +1,7 @@
 package com.kanpurlive.ghufya.kanpur_live;
 
 import android.content.Intent;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -114,18 +115,27 @@ public class ItemThreadActivity extends AppCompatActivity {
                 .build();
         adapter = new ItemsAdapter(options, this);
         shopsRecycler.setAdapter(adapter);
-        RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this) {
+       /* RecyclerView.SmoothScroller smoothScroller = new LinearSmoothScroller(this) {
             @Override protected int getVerticalSnapPreference() {
                 return LinearSmoothScroller.SNAP_TO_START;
             }
-        };
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        if(position!=-1) {
-            smoothScroller.setTargetPosition(position);
-            linearLayoutManager.startSmoothScroll(smoothScroller);
-        }
+        };*/
+        LinearLayoutManagerWithSmoothScroller linearLayoutManager = new LinearLayoutManagerWithSmoothScroller(this);
 
         shopsRecycler.setLayoutManager(linearLayoutManager);
+        if(position!=-1) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    shopsRecycler.smoothScrollToPosition(position);
+                    // yourList.scrollToPosition(position);
+                }
+            }, 200);
+           //shopsRecycler.smoothScrollToPosition(position);
+           /* smoothScroller.setTargetPosition(position);
+            linearLayoutManager.startSmoothScroll(smoothScroller);*/
+        }
+
         shopsRecycler.setEmptyView(emptyView);
     }
     private void initializeFirebaseAuthListener() {
@@ -135,7 +145,7 @@ public class ItemThreadActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 owner = firebaseAuth.getCurrentUser();
                 if (owner != null) {
-                    addUserToDatabase(owner);
+                    //addUserToDatabase(owner);
                     Log.d("@@@@", "home:signed_in:" + owner.getUid());
                 } else {
                     Log.d("@@@@", "home:signed_out");

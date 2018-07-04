@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kanpurlive.ghufya.kanpur_live">
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -18,15 +20,19 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_welcome" />
-        <activity android:name=".ShopsThread"
+        <activity
+            android:name=".ShopsThread"
+            android:hardwareAccelerated="false"
             android:label="@string/title_activity_welcome">
-            <meta-data android:name="android.app.searchable"
+            <meta-data
+                android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
         <activity android:name=".ItemThreadActivity" />
         <activity android:name=".AddItemActivity" />
         <activity android:name=".AddShopActivity" />
-        <activity android:name=".ChatThreadActivity"></activity>
+        <activity android:name=".ChatThreadActivity" />
+        <activity android:name=".ShowChatUserActivity"></activity>
     </application>
 
 </manifest>

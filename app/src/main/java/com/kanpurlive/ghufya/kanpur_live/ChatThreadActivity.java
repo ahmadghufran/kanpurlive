@@ -110,6 +110,8 @@ public class ChatThreadActivity extends AppCompatActivity implements TextWatcher
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                  user = documentSnapshot.toObject(Shop.class);
+                 toolbar.setTitle(user.getDisplayName());
+                 setSupportActionBar(toolbar);
                 initializeMessagesRecycler();
             }
         });

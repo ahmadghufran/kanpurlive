@@ -2,19 +2,17 @@ package com.kanpurlive.ghufya.kanpur_live;
 
 import android.app.SearchManager;
 import android.content.Intent;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
@@ -32,10 +30,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ShopsThread extends AppCompatActivity {
+public class ShowChatUserActivity extends AppCompatActivity {
 
-/*    @BindView(R.id.activity_main_toolbar)
-    Toolbar toolbar;*/
 
     @BindView(R.id.activity_main_shops_recycler)
     EmptyStateRecyclerView shopsRecycler;
@@ -47,7 +43,7 @@ public class ShopsThread extends AppCompatActivity {
     Toolbar toolbar;
     @BindView(R.id.appBarLayout)
     AppBarLayout appBarLayout;
-
+    FirebaseUser user;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseFirestore mDatabase;
@@ -84,7 +80,7 @@ public class ShopsThread extends AppCompatActivity {
         mDatabase = FirebaseFirestore.getInstance();
 
         initializeFirebaseAuthListener();
-        initializeUsersRecycler();
+       // initializeUsersRecycler();
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -99,7 +95,7 @@ public class ShopsThread extends AppCompatActivity {
         return true;
     }
     private void initializeUsersRecycler() {
-        Query query  = mDatabase.collection("shops").whereEqualTo("seller",true);
+        Query query  = mDatabase.collection("shops").document(user.getUid()).collection("*");
         FirestoreRecyclerOptions<Shop> options = new FirestoreRecyclerOptions.Builder<Shop>()
                 .setQuery(query , Shop.class)
                 .build();
@@ -114,14 +110,15 @@ public class ShopsThread extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
+                 user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    initializeUsersRecycler();
                     //addUserToDatabase(user);
                     Log.d("@@@@", "home:signed_in:" + user.getUid());
                 } else {
 
                     Log.d("@@@@", "home:signed_out");
-                    Intent login = new Intent(ShopsThread.this, MainActivity.class);
+                    Intent login = new Intent(ShowChatUserActivity.this, MainActivity.class);
                     startActivity(login);
                     finish();
                 }
@@ -158,7 +155,7 @@ public class ShopsThread extends AppCompatActivity {
     }
     @OnClick(R.id.chat_message)
     public void showChatUserThread(){
-       /* Intent thread = new Intent(this, ShowChatUserActivity.class);
-        startActivity(thread);*/
+        Intent thread = new Intent(this, ShowChatUserActivity.class);
+        startActivity(thread);
     }
 }

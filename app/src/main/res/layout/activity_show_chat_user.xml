@@ -50,7 +50,6 @@
         app:borderWidth="8dp"
         app:elevation="8dp"
         app:fabSize="normal"
-        android:visibility="gone"
         app:srcCompat="@drawable/ic_chat_24dp"
         app:backgroundTint="@color/material_green_50"
         android:layout_marginStart="@dimen/simple_padding_medium"
